@@ -1,0 +1,167 @@
+PARTICLE SWARM OPTIMIZATION - QUICK START GUIDE
+===============================================================================
+
+WHAT YOU HAVE:
+--------------
+A complete PSO implementation that finds parameter combinations (frac_EE, 
+pulse_fre, pulse_amp) where wave activity successfully propagates to the 
+outer layer of your hexagonal lattice network.
+
+FILES CREATED:
+--------------
+1. run_pso_simple.py              ← START HERE (main script)
+2. pso_hexgrid_parameter_estimation.py (advanced version)
+3. pso_config.py                  (configuration file)
+4. README.md                      (detailed documentation)
+5. PSO_visual_guide.png          (conceptual diagram)
+
+HOW TO RUN:
+-----------
+Step 1: Navigate to the directory containing the files
+Step 2: Run: python run_pso_simple.py
+Step 3: Wait 2-4 hours (or run quick test mode - see below)
+Step 4: Check results in outputs folder
+
+WHAT THE SCRIPT DOES:
+--------------------
+• Searches 3D parameter space:
+  - frac_EE:   [0.001, 0.5]  (excitatory coupling)
+  - pulse_fre: [0.001, 1.0]  (perturbation frequency)
+  - pulse_amp: [0.001, 5.0]  (perturbation amplitude)
+
+• Uses 30 particles exploring simultaneously
+• Runs for 50 iterations (refining search)
+• Total: 1,500 simulation evaluations
+• Finds parameters where outer layer activity > 0
+
+OUTPUTS:
+--------
+Console output:
+  - Real-time progress (iteration, best fitness, mean fitness, time)
+  - Summary of best parameters found
+  - List of all successful parameter combinations
+
+Files saved:
+  - pso_results.png (3-panel visualization)
+  - pso_all_results.txt (detailed parameter list)
+
+QUICK TEST MODE (for initial testing):
+--------------------------------------
+Edit run_pso_simple.py around line 315-320:
+
+Change:
+  pso = PSO(bounds=bounds, n_particles=30, max_iter=50)
+
+To:
+  pso = PSO(bounds=bounds, n_particles=10, max_iter=5)
+
+And around line 298, change:
+  return simulate_hexgrid(params[0], params[1], params[2])
+
+To:
+  return simulate_hexgrid(params[0], params[1], params[2], time_stop=10)
+
+This reduces runtime to ~10 minutes for testing.
+
+UNDERSTANDING RESULTS:
+---------------------
+FITNESS VALUE:
+  • Positive number: Wave successfully reached outer layer ✓
+  • Zero or negative: Wave did not propagate ✗
+  • Higher value: Stronger propagation
+
+CONVERGENCE:
+  Good signs:
+    - Best fitness increases over iterations
+    - Mean fitness gradually approaches best fitness
+    - Final best fitness is positive
+  
+  Warning signs:
+    - Best fitness plateaus early
+    - Large gap between best and mean persists
+    - All fitness values remain negative
+
+TYPICAL RESULTS:
+---------------
+You should expect to find:
+  • 100-500 parameter combinations with fitness > 0
+  • Best fitness around 1-5 (depending on your system)
+  • Clear clustering in parameter space near optimal values
+
+CUSTOMIZATION:
+-------------
+To adjust search parameters, edit these sections in run_pso_simple.py:
+
+1. PSO parameters (line ~315):
+   n_particles, max_iter, w, c1, c2
+
+2. Parameter bounds (line ~310):
+   bounds = [(min1, max1), (min2, max2), (min3, max3)]
+
+3. Threshold (line ~345):
+   threshold_params = pso.get_threshold_exceeding(threshold=0.0)
+
+TROUBLESHOOTING:
+---------------
+Problem: All fitness values are negative
+Solution: 
+  - Lower threshold to see if any propagation occurs
+  - Expand parameter ranges
+  - Check simulation with known parameters
+
+Problem: Very slow execution
+Solution:
+  - Use quick test mode first
+  - Reduce time_stop in simulate_hexgrid
+  - Reduce sampling rate (sr)
+  - Use fewer particles or iterations
+
+Problem: PSO not converging
+Solution:
+  - Increase max_iter to 100
+  - Adjust inertia weight w (try 0.5 or 0.9)
+  - Increase n_particles to 40-50
+
+NEXT STEPS AFTER PSO:
+--------------------
+1. Verify best parameters by running simulation manually
+2. Plot the full time series of outer layer activity
+3. Create spatial visualizations of wave propagation
+4. Test robustness by running PSO multiple times
+5. Refine search in promising regions (narrow bounds)
+6. Analyze parameter sensitivity around optimal values
+
+COMPARISON TO GRID SEARCH:
+--------------------------
+Grid Search (10 points per dimension):
+  • Total evaluations: 10³ = 1,000
+  • Uniform coverage (may miss optimal regions)
+  • No adaptation or learning
+
+PSO (30 particles, 50 iterations):
+  • Total evaluations: 1,500
+  • Adaptive search (focuses on promising regions)
+  • Finds optima more efficiently
+  • Better for continuous parameter spaces
+
+EXPECTED RUNTIME:
+----------------
+Full run (30 particles, 50 iterations):
+  • ~2-4 hours on typical laptop
+  • ~3 minutes per iteration
+  • ~3-5 seconds per simulation
+
+Quick test (10 particles, 5 iterations, reduced time):
+  • ~10-15 minutes
+  • Useful for debugging and initial exploration
+
+SUPPORT:
+--------
+For detailed information:
+  • See README.md for comprehensive documentation
+  • See PSO_visual_guide.png for conceptual understanding
+  • Check pso_hexgrid_parameter_estimation.py for advanced features
+
+===============================================================================
+Ready to start? Run: python run_pso_simple.py
+===============================================================================
